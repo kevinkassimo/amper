@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "install-drivers": "./driver.sh",
+    "server": "node server.js",
+    "start": "PATH=$PATH:./drivers SELENIUM_PROMISE_MANAGER=0 node index.js"
+  },
+  "dependencies": {
+    "chai": "^4.1.2",
+    "chalk": "^2.4.1",
+    "express": "^4.16.3",
+    "glob": "^7.1.2",
+    "minimist": "^1.2.0",
+    "mocha": "^5.2.0",
+    "selenium-webdriver": "^4.0.0-alpha.1",
+    "serve-index": "^1.9.1"
+  }
+}
