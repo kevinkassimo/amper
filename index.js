@@ -5,7 +5,7 @@ const {capabilities, retries} = require('./config');
 const {registerTestFile} = require('./lib/describe');
 const {Reporter} = require('./lib/taskReport');
 const {BrowserGroups} = require('./lib/browser');
-const {warning, error} = require('./lib/log');
+const {info, warning, error} = require('./lib/log');
 
 // Files to test
 let filesToTest;
@@ -24,6 +24,8 @@ if ('cap' in argv) {
 } else {
   capsToTest = Object.keys(capabilities);
 }
+
+info(`>>> Selected capabilities: ${capsToTest.join(', ')}`);
 
 let tasks = [];
 
@@ -48,62 +50,29 @@ capsToTest.forEach(cap => {
 
 let taskPromises = tasks.map(task => task.completePromise);
 
-tasks.forEach(task => browserGroups.dispatchTask(task));
+info('>>> Running tests...');
 
-// if (!retries) {
-//   // Wait for all tasks to complete
-//   Promise.all(taskPromises).then(async () => {
-//     // Submit a final report of the tests
-//     reporter.finalReport();
-//     // Kill all spawned browsers
-//     await browserGroups.cleanup();
-//   });
-// } else {
-//   (async () => {
-//     let remainingRetries = retries;
-//     while (remainingRetries > 0) {
-//       warning(`>>> Remaining retries: ${remainingRetries}`)
-//       tasks = tasks.filter(task => !!task.error);
-//       tasks.forEach(task => {
-//         task.reset();
-//       });
-//       reporter.reset();
-//       tasks.forEach()
-//       taskPromises = tasks.map(task => task.completePromise);
-//       await taskPromises;
-//       reporter.finalReport();
-//       if (reporter.erroredTask.length === 0) {
-//         await browserGroups.cleanup();
-//         return;
-//       } else {
-//         remainingRetries--;
-//       }
-//     }
-//     error(`Still errors after retries. Exiting...`);
-//     await browserGroups.cleanup();
-//   })();
-// }
+tasks.forEach(task => browserGroups.dispatchTask(task));
 
 // Wait for all tasks to complete
 Promise.all(taskPromises).then(async () => {
   // Submit a final report of the tests
   reporter.finalReport();
 }).then(async () => {
-  // console.log(retries);
   if (!!retries && reporter.erroredTask.length > 0) {
     let remainingRetries = retries;
     while (remainingRetries > 0) {
-      warning(`>>> Remaining retries: ${remainingRetries}`)
+      warning(`>>> Remaining retries: ${remainingRetries}`);
+      // Pick out tasks that errored out
       tasks = tasks.filter(task => !!task.error);
-      // console.log(tasks);
+      // Reset tasks to prepare for new run
       tasks.forEach(task => {
         task.reset();
       });
+      // Clear reporter info
       reporter.reset();
-      // console.log(tasks);
-      // console.log(reporter);
       taskPromises = tasks.map(task => task.completePromise);
-      // console.log(taskPromises);
+      // Reschedule
       tasks.forEach(task => browserGroups.dispatchTask(task));
       await Promise.all(taskPromises);
       reporter.finalReport();
@@ -114,6 +83,7 @@ Promise.all(taskPromises).then(async () => {
         remainingRetries--;
       }
     }
+    // Too many failures...
     error(`Still errors after retries. Exiting...`);
     await browserGroups.cleanup();
   } else {
