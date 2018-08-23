@@ -15,10 +15,10 @@ describe('test suite 1', () => {
       expect(env.a).to.equal(1);
       env.a = 2;
       await browser.get('http://www.google.com/ncr');
-      fs.writeFileSync(`test-1-${j}-${Date.now()}.png`, await browser.takeScreenshot(), 'base64');
+      fs.writeFileSync(`screenshots/test-1.png`, await browser.takeScreenshot(), 'base64');
     });
   }
-
+  
   it('should throw error', async (browser, env) => {
     // throw new Error(1);
   })

@@ -1,26 +1,23 @@
 const fs = require('fs');
 
-// drivers.for(['chrome', /* 'firefox', 'safari', */ 'chrome1', 'chrome2', 'chrome3', 'chrome4', 'chrome5', 'chrome6', 'chrome7', 'chrome8', 'chrome9', 'chrome10']).run((type, driver, done) => {
-//   describe('amp-carousel[type=slides]', () => {
-//     beforeEach(async () => {
-//       console.log('WTF');
-//     });
-//     after(() => {
-//       done();
-//     });
-//     it('should run', async () => {
-//       await driver.get('http://www.google.com/ncr');
-//       fs.writeFileSync(`screenshots/test${Date.now()}.png`, await driver.takeScreenshot(), 'base64');
-//     }).timeout(10000);
-//   });
-// });
+describe('test suite 1', () => {
+  beforeEach(async (browser, env) => {
+    env.a = 1;
+  });
 
-describe('amp-carousel[type=slides]', () => {
-  beforeEach(async () => {
-    console.log('WTF');
+  afterEach(async (browser, env) => {
+
   });
-  it('should run', async () => {
-    await driver.get('http://www.google.com/ncr');
-    // fs.writeFileSync(`screenshots/test${Date.now()}.png`, await driver.takeScreenshot(), 'base64');
+
+  it('should throw error', async (browser, env) => {
+    throw new Error('THIS IS A TEST ERROR');
   });
-});
+
+  it('should throw error on timeout', async (browser, env) => {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, 20000);
+    });
+  });
+}).timeout(10000);
