@@ -25,8 +25,6 @@ const tasks = [];
 const browserGroups = new BrowserGroups();
 const reporter = new Reporter();
 
-console.log(capsToTest);
-
 capsToTest.forEach(cap => {
   if (!(cap in capabilities)) {
     throw new Error(`Capability ${cap} is not registered in config.js`);
@@ -36,15 +34,11 @@ capsToTest.forEach(cap => {
       throw new Error(`File ${filename} does not exist`);
     }
     const generatedTasks = registerTestFile(cap, `../${filename}`, reporter);
-    console.log(cap, generatedTasks.length);
     tasks.push(...generatedTasks);
   });
   // Default 1 instance per browser
   browserGroups.addBrowserInstances(cap, capabilities[cap].instances || 1);
 });
-
-console.log(browserGroups)
-console.log(tasks);
 
 const taskPromises = tasks.map(task => task.completePromise);
 
