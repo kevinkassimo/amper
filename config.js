@@ -19,5 +19,6 @@ module.exports = {
     //   browserName: 'safari',
     //   platform: 'MAC',
     // }
-  }
+  },
+  retries: 2,
 };

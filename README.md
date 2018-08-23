@@ -30,3 +30,6 @@ describe('Test suite', () => {
   });
 });
 ```
+
+## Known issues
+`setTimeout` would block process from ever exist or more... AVOID using it.

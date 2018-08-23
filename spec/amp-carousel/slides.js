@@ -1,4 +1,5 @@
 const fs = require('fs');
+const {By, until} = require('selenium-webdriver');
 
 describe('test suite 1', () => {
   beforeEach(async (browser, env) => {
@@ -13,11 +14,8 @@ describe('test suite 1', () => {
     throw new Error('THIS IS A TEST ERROR');
   });
 
-  it('should throw error on timeout', async (browser, env) => {
-    return new Promise(resolve => {
-      setTimeout(() => {
-        resolve();
-      }, 20000);
-    });
+  it('should failed to find element', async (browser, env) => {
+    await browser.get('https://google.com/ncr');
+    await browser.wait(until.elementLocated(By.name("lolololol")));
   });
 }).timeout(10000);
