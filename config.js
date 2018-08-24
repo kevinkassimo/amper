@@ -27,5 +27,8 @@ module.exports = {
     //   instances: 10,
     // }
   },
-  retries: 2,
+  timeouts: {
+    // See https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_Options.html#setTimeouts
+  }
+  // retries: 2,
 };
