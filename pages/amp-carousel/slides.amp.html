@@ -20,14 +20,26 @@
 </head>
 <body>
   <main class="content">
-    <amp-carousel id="slides" width="400" height="300" layout="responsive" type="slides">
+    <amp-carousel id="slides" width="400" height="300" layout="responsive" type="slides" controls>
       <div>hello world</div>
-      <amp-img src="./img/1.jpg" layout="fill">
+      <amp-img src="./img/1.jpg" layout="fill" id="img-1">
       </amp-img>
-      <amp-img src="./img/2.jpg" width="400" height="300" layout=responsive>
+      <amp-img src="./img/2.jpg" layout="fill" id="img-2">
       </amp-img>
-      <amp-img src="./img/3.jpg" width="400" height="300" layout=responsive>
+      <amp-img src="./img/3.jpg" layout="fill" id="img-3">
       </amp-img>
     </amp-carousel>
   </main>
+  <script>
+    document.body.addEventListener('touchstart', (e) => {
+      console.log('touchstart', e);
+    });
+    document.body.addEventListener('touchmove', (e) => {
+      console.log('touchmove', e);
+    }, true);
+    document.body.addEventListener('touchend', (e) => {
+      console.log('touchend', e);
+    });
+  </script>
+</body>
 </html>

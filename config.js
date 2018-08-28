@@ -14,13 +14,16 @@ module.exports = {
     'chrome': {
       browserName: 'chrome',
       platform: 'MAC',
-      instances: 3,
+      // mobileEmulation: {
+      //   deviceName: 'Nexus 5',
+      // },
+      instances: 1,
     },
-    'firefox': {
-      browserName: 'firefox',
-      platform: 'MAC',
-      instances: 3,
-    },
+    // 'firefox': {
+    //   browserName: 'firefox',
+    //   platform: 'MAC',
+    //   instances: 1,
+    // },
     // 'safari': {
     //   browserName: 'safari',
     //   platform: 'MAC',
@@ -29,6 +32,7 @@ module.exports = {
   },
   timeouts: {
     // See https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_Options.html#setTimeouts
-  }
-  // retries: 2,
+  },
+  // headless: true,
+  retries: 2,
 };

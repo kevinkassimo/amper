@@ -2,7 +2,7 @@
   "scripts": {
     "install-drivers": "./driver.sh",
     "server": "node server.js",
-    "start": "PATH=$PATH:./drivers SELENIUM_PROMISE_MANAGER=0 node index.js",
+    "start": "NODE_PATH=. PATH=$PATH:./drivers SELENIUM_PROMISE_MANAGER=0 node index.js",
     "kill-headless": "pkill -f 'headless'"
   },
   "dependencies": {

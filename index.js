@@ -80,7 +80,13 @@ Promise.all(taskPromises).then(async () => {
       reporter.finalReport();
       if (reporter.erroredTask.length === 0) {
         // await browserGroups.cleanup();
-        process.exit(0);
+        // Cannot trust driver.quit() any more.
+        // Use psTree to explicitly kill off all children with ppid = process.pid
+        // Must kill here: if we leave the job to an external shell script, the orphaned drivers would be adopted by init/systemd, lose track of them...
+        psTree(process.pid, (err, children) => {
+          cp.spawn('kill', ['-9'].concat(children.map(p => p.PID)));
+          process.exit(0);
+        });
         return;
       } else {
         remainingRetries--;
@@ -102,7 +108,7 @@ Promise.all(taskPromises).then(async () => {
     // Use psTree to explicitly kill off all children with ppid = process.pid
     // Must kill here: if we leave the job to an external shell script, the orphaned drivers would be adopted by init/systemd, lose track of them...
     psTree(process.pid, (err, children) => {
-      cp.spawn('kill', ['-9'].concat(children.map(function (p) { return p.PID })));
+      cp.spawn('kill', ['-9'].concat(children.map(p => p.PID)));
       process.exit(reporter.erroredTask.length > 0 ? 1 : 0);
     });
   }
