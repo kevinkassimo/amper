@@ -11,7 +11,7 @@ module.exports = {
    * It is suggested that max browsers to spawn should be 10 in total at a time (maxListener count for setTimeout)
    */
   capabilities: {
-    'chrome': {
+    'chrome': { // Be careful, in many test units, this name is accessed by env.capability. DO NOT change this name. For a new chrome instance, use another name
       browserName: 'chrome',
       platform: 'MAC',
       // mobileEmulation: {

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const {By, until} = require('selenium-webdriver');
 
-const {AmpImgInjector} = require('../../lib/inject');
+const {AmpImgInjector} = require('../../lib/injector');
 const {ScreenShotManager} = require('../../lib/screenshot');
 const helper = require('../../lib/helper');
 
@@ -11,10 +11,6 @@ const helper = require('../../lib/helper');
 // support for promise manager.
 // Nevertheless, it will still be interesting to check out.
 
-function roundedEqual(a, b) {
-  return Math.round(a) === Math.round(b);
-}
-
 async function waitForButtons(browser, env) {
   const prevButtonSelector = By.css('#slides .amp-carousel-button.amp-carousel-button-prev');
   const nextButtonSelector = By.css('#slides .amp-carousel-button.amp-carousel-button-next');
@@ -22,16 +18,6 @@ async function waitForButtons(browser, env) {
   await browser.wait(until.elementLocated(nextButtonSelector));
   env.prevButton = await browser.findElement(prevButtonSelector);
   env.nextButton = await browser.findElement(nextButtonSelector);
-}
-
-function isSameRect(rect1, rect2) {
-  expect(rect1.x).to.equal(rect2.x);
-  expect(rect1.width).to.equal(rect2.width);
-  // There is a BUG with carousel
-  // that has a white padding at its bottom.
-  // Thus, currently things below are not tested.
-  // expect(rect1.y).to.equal(rect2.y);
-  // expect(rect1.height).to.equal(rect2.height);
 }
 
 /**
@@ -91,7 +77,7 @@ describe('amp-carousel[type=slides]', () => {
     await browser.wait(until.elementLocated(By.css('[title="Next item in carousel (3 of 4)"]')));
     // SLIDE 2
     // Wait for img tag of amp-img to be loaded, we want the screenshot to actually have the image.
-    // This `test-load` attribute is injected in HTML file (injected when 'load' event is triggered).
+    // This `amper-amp-img-loaded` attribute is injected in HTML file (injected when 'load' event is triggered).
     // We are explicitly doing this, since the above await only guarantees correct slides to be displayed
     // But no guarantee for img to be loaded
     await env.ampImgInjector.waitForLoad('#img-1');
@@ -143,6 +129,8 @@ describe('amp-carousel[type=slides]', () => {
     await env.screenShotManager.takeElementScreenshot('amp-carousel', `slides-${env.capability}-page-1-prev.png`);
   });
 
+  // WARNING: this test only works on Chrome
+  // Firefox would throw "unknown command" when running this!!!
   it('should allow scroll operations', async (browser, env) => {
     // Ensure buttons are ready
     await waitForButtons(browser, env);
@@ -164,7 +152,31 @@ describe('amp-carousel[type=slides]', () => {
     // Wait for image
     await env.ampImgInjector.waitForLoad('#img-1');
     // Take a screenshot
-    await env.screenShotManager.takeElementScreenshot('amp-carousel', `slides-${env.capability}-scroll.png`);
+    await env.screenShotManager.takeElementScreenshot('amp-carousel', `slides-${env.capability}-scroll-2.png`);
+
+    // Scroll
+    await helper.touch.scrollFromElement(browser, '.i-amphtml-slides-container', {
+      x: 300,
+      y: -10,
+    }, true);
+    // Ensure we are at the third slide
+    await browser.wait(until.elementLocated(By.css('[title="Next item in carousel (4 of 4)"]')));
+    // Wait for image
+    await env.ampImgInjector.waitForLoad('#img-2');
+    // Take a screenshot
+    await env.screenShotManager.takeElementScreenshot('amp-carousel', `slides-${env.capability}-scroll-3.png`);
+
+    // Scroll
+    await helper.touch.scrollFromElement(browser, '.i-amphtml-slides-container', {
+      x: 300,
+      y: -10,
+    }, true);
+    // Ensure we are at the third slide
+    await browser.wait(until.elementLocated(By.css('[title="Previous item in carousel (3 of 4)"]')));
+    // Wait for image
+    await env.ampImgInjector.waitForLoad('#img-3');
+    // Take a screenshot
+    await env.screenShotManager.takeElementScreenshot('amp-carousel', `slides-${env.capability}-scroll-4.png`);
 
     // NOTICE: the following is the original wrong implementation. Kept for future reference.
     /*

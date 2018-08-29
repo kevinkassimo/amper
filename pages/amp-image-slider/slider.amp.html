@@ -13,22 +13,44 @@
       max-width: 500px;
       margin: auto;
     }
+    .label {
+      color: white;
+      background-color: rgba(0, 0, 0, 0.4);
+      width: 5rem;
+      padding: 1rem 0;
+      text-align: center;
+      font-weight: bold;
+    }
+    .label-left-center {
+      top: 50%;
+      left: 1rem;
+      transform: translateY(-50%);
+    }
+    .label-right-center {
+      top: 50%;
+      right: 1rem;
+      transform: translateY(-50%);
+    }
+    .huge-padding {
+      height: 10000px; /* Should be at least 2x larger than the height of viewport */
+    }
   </style>
-  <script async custom-element="amp-carousel" src="https://cdn.ampproject.org/v0/amp-carousel-0.1.js"></script>
+  <script async custom-element="amp-image-slider" src="https://cdn.ampproject.org/v0/amp-image-slider-0.1.js"></script>
   <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
   <script async src="https://cdn.ampproject.org/v0.js"></script>
+  <script>
+    
+  </script>
 </head>
 <body>
   <main class="content">
-    <amp-carousel id="slides" width="400" height="300" layout="responsive" type="slides" controls>
-      <div>hello world</div>
-      <amp-img src="./img/1.jpg" layout="fill" id="img-1">
-      </amp-img>
-      <amp-img src="./img/2.jpg" layout="fill" id="img-2">
-      </amp-img>
-      <amp-img src="./img/3.jpg" layout="fill" id="img-3">
-      </amp-img>
-    </amp-carousel>
+    <amp-image-slider width="400" height="300" layout="responsive">
+      <amp-img id="img-1" src="./img/1.jpg" layout="fill"></amp-img>
+      <amp-img id="img-2" src="./img/2.jpg" layout="fill"></amp-img>
+      <div first class="label label-left-center">BEFORE</div>
+      <div second class="label label-right-center">AFTER</div>
+    </amp-image-slider>
+    <p class="huge-padding"></p>
   </main>
 </body>
 </html>

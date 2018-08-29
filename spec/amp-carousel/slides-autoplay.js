@@ -1,6 +1,6 @@
 const {By, until} = require('selenium-webdriver');
 
-const {AmpImgInjector} = require('../../lib/inject');
+const {AmpImgInjector} = require('../../lib/injector');
 const {ScreenShotManager} = require('../../lib/screenshot');
 
 function functionToInvokedString(fn) {
