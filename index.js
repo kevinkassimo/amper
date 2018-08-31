@@ -95,7 +95,7 @@ Promise.all(taskPromises).then(async () => {
     // Too many failures...
     error(`Still errors after retries. Exiting...`);
     // await browserGroups.cleanup();
-    // Cannot trust driver.quit() any more.
+    // Cannot trust driver.quit() any more! It sucks...
     // Use psTree to explicitly kill off all children with ppid = process.pid
     // Must kill here: if we leave the job to an external shell script, the orphaned drivers would be adopted by init/systemd, lose track of them...
     psTree(process.pid, (err, children) => {
@@ -104,7 +104,7 @@ Promise.all(taskPromises).then(async () => {
     });
   } else {
     // await browserGroups.cleanup();
-    // Cannot trust driver.quit() any more.
+    // Cannot trust driver.quit() any more! It sucks...
     // Use psTree to explicitly kill off all children with ppid = process.pid
     // Must kill here: if we leave the job to an external shell script, the orphaned drivers would be adopted by init/systemd, lose track of them...
     psTree(process.pid, (err, children) => {

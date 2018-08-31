@@ -1,27 +1,46 @@
 const {By, until} = require('selenium-webdriver');
 const {LegacyActionSequence} = require('selenium-webdriver/lib/actions');
+const {Key} = require('selenium-webdriver/lib/input');
 
 const {AmpImgInjector} = require('../../lib/injector');
 const {ScreenShotManager} = require('../../lib/screenshot');
 const helper = require('../../lib/helper');
 
+// See comment in doc about CSS animation
+// This might not be the best approach
 async function waitForHintDisappear(browser) {
   // Wait for hints to disappear, keeping our screenshot result uniform
   await browser.wait(async () => {
-    const leftHintStyle = await helper.style.getComputedStyle(browser, '.i-amphtml-image-slider-container > .i-amphtml-image-slider-hint');
+    // There seems to be no better way here other than access internal classes
+    const leftHintOpacity = await helper.style.getComputedStyleByName(browser, '.i-amphtml-image-slider-container > .i-amphtml-image-slider-hint', 'opacity');
     // Use adjacent sibling to flip find order
-    const rightHintStyle = await helper.style.getComputedStyle(browser, '.i-amphtml-image-slider-container > .i-amphtml-image-slider-hint ~ .i-amphtml-image-slider-hint');
-    return leftHintStyle.opacity === '0' && rightHintStyle.opacity === '0';
+    const rightHintOpacity = await helper.style.getComputedStyleByName(browser, '.i-amphtml-image-slider-container > .i-amphtml-image-slider-hint ~ .i-amphtml-image-slider-hint', 'opacity');
+    return Number(leftHintOpacity) === 0 && Number(rightHintOpacity) === 0;
+  });
+  // Request an animation frame
+  await browser.executeAsyncScript(function () {
+    // See http://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/ie_exports_Driver.html#executeAsyncScript
+    var cb = arguments[arguments.length - 1];
+    window.requestAnimationFrame(cb);
   });
 }
 
+// See comment in doc about CSS animation
+// This might not be the best approach
 async function waitForHintReappear(browser) {
   // Wait for hints to disappear, keeping our screenshot result uniform
   await browser.wait(async () => {
-    const leftHintStyle = await helper.style.getComputedStyle(browser, '.i-amphtml-image-slider-container > .i-amphtml-image-slider-hint');
+    // There seems to be no better way here other than access internal classes
+    const leftHintOpacity = await helper.style.getComputedStyleByName(browser, '.i-amphtml-image-slider-container > .i-amphtml-image-slider-hint', 'opacity');
     // Use adjacent sibling to flip find order
-    const rightHintStyle = await helper.style.getComputedStyle(browser, '.i-amphtml-image-slider-container > .i-amphtml-image-slider-hint ~ .i-amphtml-image-slider-hint');
-    return leftHintStyle.opacity === '1' && rightHintStyle.opacity === '1';
+    const rightHintOpacity = await helper.style.getComputedStyleByName(browser, '.i-amphtml-image-slider-container > .i-amphtml-image-slider-hint ~ .i-amphtml-image-slider-hint', 'opacity');
+    return Number(leftHintOpacity) === 1 && Number(rightHintOpacity) === 1;
+  });
+  // Request an animation frame
+  await browser.executeAsyncScript(function () {
+    // See http://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/ie_exports_Driver.html#executeAsyncScript
+    var cb = arguments[arguments.length - 1];
+    window.requestAnimationFrame(cb);
   });
 }
 
@@ -52,10 +71,8 @@ describe('amp-image-slider', () => {
     await env.ampImgInjector.waitForLoad('#img-1');
     await env.ampImgInjector.waitForLoad('#img-2');
     // Wait for the hints to be attached (last operation that demonstrates end of amp-image-slider layout)
-    await browser.wait(async () => {
-      const hints = await browser.findElements(By.css('.i-amphtml-image-slider-hint'));
-      return hints.length === 2;
-    });
+    await browser.wait(until.elementLocated(By.css('.amp-image-slider-hint-left')));
+    await browser.wait(until.elementLocated(By.css('.amp-image-slider-hint-right')));
     // Configure screenshot manager
     env.screenShotManager = new ScreenShotManager(browser, 'amp-image-slider');
     // Make a decent window size for screenshots.
@@ -100,12 +117,7 @@ describe('amp-image-slider', () => {
       });
 
       // Wait for hints to disappear, keeping our screenshot result uniform
-      await browser.wait(async () => {
-        const leftHintStyle = await helper.style.getComputedStyle(browser, '.i-amphtml-image-slider-container > .i-amphtml-image-slider-hint');
-        // Use adjacent sibling to flip find order
-        const rightHintStyle = await helper.style.getComputedStyle(browser, '.i-amphtml-image-slider-container > .i-amphtml-image-slider-hint ~ .i-amphtml-image-slider-hint');
-        return leftHintStyle.opacity === '0' && rightHintStyle.opacity === '0';
-      });
+      await waitForHintDisappear(browser);
 
       await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-click-${env.capability}.png`);
     }
@@ -133,12 +145,7 @@ describe('amp-image-slider', () => {
       });
 
       // Wait for hints to disappear, keeping our screenshot result uniform
-      await browser.wait(async () => {
-        const leftHintStyle = await helper.style.getComputedStyle(browser, '.i-amphtml-image-slider-container > .i-amphtml-image-slider-hint');
-        // Use adjacent sibling to flip find order
-        const rightHintStyle = await helper.style.getComputedStyle(browser, '.i-amphtml-image-slider-container > .i-amphtml-image-slider-hint ~ .i-amphtml-image-slider-hint');
-        return leftHintStyle.opacity === '0' && rightHintStyle.opacity === '0';
-      });
+      await waitForHintDisappear(browser);
 
       // Take the first screenshot, such that we know mousedown moves correctly
       await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-move-${env.capability}-1.png`);
@@ -215,5 +222,48 @@ describe('amp-image-slider', () => {
       // Take a screenshot for condition after scrolling back (hint should reappear)
       await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-scroll-reappear-${env.capability}-3.png`);
     }
+  });
+
+  it('should move slider with keyboard', async (browser, env) => {
+    if (env.capability === 'chrome') {
+      // The following is also legacy, currently only working on Chrome
+      const actionSeq1 = new LegacyActionSequence(browser);
+      // FOCUS first
+      actionSeq1.sendKeys(Key.TAB);
+      // Press down left key
+      actionSeq1.sendKeys(Key.LEFT);
+      // Dispatch actions
+      await actionSeq1.perform();
+      // Wait for a second, we have no idea when the runtime finished moving
+      await helper.wait.forMS(1000);
+      // Also ensure there is no interfering hint
+      await waitForHintDisappear(browser);
+      // Take a screenshot for condition after scrolling back (hint should reappear)
+      await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-keyboard-${env.capability}-1.png`);
+      // Another sequence
+      const actionSeq2 = new LegacyActionSequence(browser);
+      // Still focused for now...
+      // Press down 2 left key presses
+      actionSeq2.sendKeys(Key.PAGE_DOWN);
+      // Explicitly lift key
+      // actionSeq2.keyUp(Key.PAGE_DOWN);
+      // Dispatch actions
+      await actionSeq2.perform();
+      // Wait for a second, we have no idea when the runtime finished moving
+      await helper.wait.forMS(1000);
+      // Take a screenshot for condition after scrolling back (hint should reappear)
+      await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-keyboard-${env.capability}-2.png`);
+    }
+  });
+
+  it('should move slider with .seekTo action', async (browser, env) => {
+    // Find the button for seeking
+    const seekButton = await browser.findElement(By.css('#btn'));
+    // Click the button
+    await seekButton.click();
+    // No guarantee if something happens or not, wait for 1 sec
+    await helper.wait.forMS(1000);
+    // Take a screenshot for condition after scrolling back (hint should reappear)
+    await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-seekTo-${env.capability}.png`);
   });
 }).timeout(20000);

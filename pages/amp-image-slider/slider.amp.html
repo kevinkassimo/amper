@@ -44,12 +44,13 @@
 </head>
 <body>
   <main class="content">
-    <amp-image-slider width="400" height="300" layout="responsive">
+    <amp-image-slider id="seekable" width="400" height="300" layout="responsive" tabindex="0">
       <amp-img id="img-1" src="./img/1.jpg" layout="fill"></amp-img>
       <amp-img id="img-2" src="./img/2.jpg" layout="fill"></amp-img>
       <div first class="label label-left-center">BEFORE</div>
       <div second class="label label-right-center">AFTER</div>
     </amp-image-slider>
+    <button id="btn" on="tap:seekable.seekTo(percent=0.3)">Seek to 30%</button>
     <p class="huge-padding"></p>
   </main>
 </body>
