@@ -38,14 +38,20 @@ capsToTest.forEach(cap => {
   if (!(cap in capabilities)) {
     throw new Error(`Capability ${cap} is not registered in config.js`);
   }
-  filesToTest.forEach(filename => {
+  for (let filename of filesToTest) {
     if (!fs.existsSync(filename)) {
       throw new Error(`File ${filename} does not exist`);
     }
     // Change relative path
-    const generatedTasks = registerTestFile(cap, `../${filename}`, reporter);
-    tasks.push(...generatedTasks);
-  });
+    const registeredTestsInfo = registerTestFile(cap, `../${filename}`, reporter);
+    if (registeredTestsInfo.hasOnly) {
+      // There is a suite that we should only run
+      tasks = registeredTestsInfo.tasks;
+      // No longer register other tests
+      break;
+    }
+    tasks.push(...registeredTestsInfo.tasks);
+  }
   // Default 1 instance per browser
   browserGroups.addBrowserInstances(cap, capabilities[cap].instances || 1);
 });
