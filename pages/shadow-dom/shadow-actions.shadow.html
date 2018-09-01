@@ -1,0 +1,26 @@
+<!doctype html>
+<html ⚡>
+<head>
+  <meta charset="utf-8">
+  <title>Shadow</title>
+  <link rel="canonical" href="amps.html" >
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <style amp-custom>
+    #shadow-main {
+      height: 200px;
+    }
+    .padding {
+      height: 2000px;
+    }
+  </style>
+</head>
+<body>
+  <main id="shadow-main">
+    <button id="btn" on="tap:secret.toggleVisibility">Toggle Text</button>
+    <h1 id="secret">Now You See Me</h1>
+  </main>
+  <button id="scroll-btn" on="tap:bottom-text.scrollTo">Scroll To Bottom Text</button>
+  <div class="padding"></div>
+  <h1 id="bottom-text">Now You Scroll To Me</h1>
+</body>
+</html>

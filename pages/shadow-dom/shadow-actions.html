@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Shadow Root Example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Here comes the JSX -->
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+  <!-- OMG, React -->
+  <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+  <!-- And finally... -->
+  <script async src="https://cdn.ampproject.org/shadow-v0.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    function ampRun(cb) {
+      (window.AMP = window.AMP || []).push(cb);
+    }
+
+    class App extends React.Component {
+      constructor(props) {
+        super(props);
+      }
+
+      componentDidMount() {
+        this.fetchDocument(this.props.url);
+      }
+
+      fetchDocument(url) {
+        var xhr = new XMLHttpRequest();
+        new Promise((resolve, reject) => {
+          xhr.open('GET', url, true);
+          xhr.responseType = 'document';
+          xhr.setRequestHeader('Accept', 'text/html');
+          xhr.onload = function() {
+            resolve(xhr.responseXML);
+          };
+          xhr.send();
+        }).then((doc) => {
+          this.container.innerHTML = '';
+          const shadowRoot = document.createElement('div');
+          shadowRoot.id = "shadowRoot"
+          ampRun((AMP) => {
+            AMP.attachShadowDoc(shadowRoot, doc, url);
+            this.container.appendChild(shadowRoot);
+          });
+        });
+      }
+
+      render() {
+        return <div>
+          <div ref={ref => this.container = ref}></div>
+        </div>;
+        return ;
+      }
+    }
+
+    ReactDOM.render(<App url="./shadow-actions.shadow.html" />, document.getElementById('root'));
+  </script>
+</body>
+</html>

@@ -131,6 +131,8 @@ describe('amp-carousel[type=slides]', () => {
 
   // WARNING: this test only works on Chrome
   // Firefox would throw "unknown command" when running this!!!
+  // We are not adding more scrolling tests right now
+  // since this scrolling is already not reliable enough
   it('should allow scroll operations', async (browser, env) => {
     // Ensure buttons are ready
     await waitForButtons(browser, env);
