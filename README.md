@@ -8,8 +8,9 @@ A mocha-like test framework is created to run the tests. However, it differs fro
 ## How to run
 Put your tests in `spec/**/*.js`.
 ```bash
-yarn run install-drivers # install drivers
-yarn run server # start server at localhost:8080, allowing accessing pages in pages/ folder
+yarn install-drivers # install drivers. Just run once at the very beginning
+yarn # install packages (express, etc.)
+yarn server # start server at localhost:8080, allowing accessing pages in pages/ folder
 yarn start [--spec="file1,file2"] [--cap="firefox,chrome,safari"] # run tests, with given files and capabilities. Separate with comma
 ```
 Tests should look like this:
