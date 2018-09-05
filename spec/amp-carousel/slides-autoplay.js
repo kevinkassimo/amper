@@ -3,7 +3,7 @@ const {By, until} = require('selenium-webdriver');
 const {AmpImgInjector} = require('../../lib/injector');
 const {ScreenShotManager} = require('../../lib/screenshot');
 
-describe('amp-carousel[type=slides] autoplay', () => {
+describe('amp-carousel[type=slides autoplay]', () => {
   beforeEach(async (browser, env) => {
     await browser.get('http://localhost:8080/amp-carousel/slides-autoplay.amp.html');
     env.ampImgInjector = new AmpImgInjector(browser);
@@ -35,7 +35,7 @@ describe('amp-carousel[type=slides] autoplay', () => {
     await env.ampImgInjector.waitForLoad('#img-1');
     // Take a screenshot
     await env.screenShotManager.takeElementScreenshot('amp-carousel', `slides-autoplay-${env.capability}-page-1.png`);
-    // Click button to start autoplay
+    // Click button to start autoplay (this gives us a bit more timing control about when we capture the autoplay changes)
     await browser.findElement(By.css('#toggler')).click();
     // Wait for next slide
     await browser.wait(until.elementLocated(By.css('[title="Next item in carousel (3 of 3)"]')));

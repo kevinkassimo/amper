@@ -133,6 +133,8 @@ describe('amp-carousel[type=slides]', () => {
   // Firefox would throw "unknown command" when running this!!!
   // We are not adding more scrolling tests right now
   // since this scrolling is already not reliable enough
+  //
+  // Also the screenshot for scroll seems a bit off... (somehow scrolled a bit upwards?)
   it('should allow scroll operations', async (browser, env) => {
     // Ensure buttons are ready
     await waitForButtons(browser, env);
@@ -199,5 +201,10 @@ describe('amp-carousel[type=slides]', () => {
       duration: 500,
     }, true);
     */
+  });
+
+  it('should respond to .goToSlide() action', async (browser, env) => {
+    // Ensure buttons are ready
+    await waitForButtons(browser, env);
   });
 }).timeout(2000000);

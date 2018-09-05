@@ -14,7 +14,7 @@ const helper = require('../../lib/helper');
  * Only beforeEach(), afterEach(), and it() are implemented.
  * `browser` is the driver, and `env` is an object to store info across beforeEach, it and afterEach
  */
-describe.only('shadow dom actions', () => {
+describe('shadow dom actions', () => {
   beforeEach(async (browser, env) => {
     // Visit page FIRST!
     await browser.get('http://localhost:8080/shadow-dom/shadow-actions.html');

@@ -1,5 +1,5 @@
 const {By, until} = require('selenium-webdriver');
-const {LegacyActionSequence} = require('selenium-webdriver/lib/actions');
+const {LegacyActionSequence, LegacyTouchSequence} = require('selenium-webdriver/lib/actions');
 const {Key} = require('selenium-webdriver/lib/input');
 
 const {AmpImgInjector} = require('../../lib/injector');
@@ -97,6 +97,7 @@ describe('amp-image-slider', () => {
     const rightLabelWrapper = await browser.findElement(By.css('.i-amphtml-image-slider-label-wrapper.i-amphtml-image-slider-push-left'));
     // Style is the attribute for use to know if the DOM has updated or not
     const rightLabelWrapperStyle = await rightLabelWrapper.getAttribute('style');
+    // WARNING: CHROME ONLY
     if (env.capability === 'chrome') {
       // Chrome only supports LegacyActionSequence
       // LegacyActionSequence stores a seq of actions that would only perform when we call .perform()
@@ -129,6 +130,7 @@ describe('amp-image-slider', () => {
     const rightLabelWrapper = await browser.findElement(By.css('.i-amphtml-image-slider-label-wrapper.i-amphtml-image-slider-push-left'));
     // Style is the attribute for use to know if the DOM has updated or not
     let rightLabelWrapperStyle = await rightLabelWrapper.getAttribute('style');
+    // WARNING: CHROME ONLY
     if (env.capability === 'chrome') {
       // In this sequence, we only do mousedown and mousemove, Should move slider
       const actionSeq1 = new LegacyActionSequence(browser);
@@ -148,7 +150,7 @@ describe('amp-image-slider', () => {
       await waitForHintDisappear(browser);
 
       // Take the first screenshot, such that we know mousedown moves correctly
-      await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-move-${env.capability}-1.png`);
+      await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-mousemove-${env.capability}-1.png`);
 
       // Refresh style
       rightLabelWrapperStyle = await rightLabelWrapper.getAttribute('style');
@@ -169,7 +171,7 @@ describe('amp-image-slider', () => {
       });
 
       // Take a second screenshot, such that we know mousemove moves correctly
-      await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-move-${env.capability}-2.png`);
+      await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-mousemove-${env.capability}-2.png`);
 
       // Refresh style
       rightLabelWrapperStyle = await rightLabelWrapper.getAttribute('style');
@@ -185,7 +187,143 @@ describe('amp-image-slider', () => {
       await helper.wait.forMS(1000);
 
       // Take a second screenshot, such that we know mousemove moves correctly
-      await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-move-${env.capability}-3.png`);
+      await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-mousemove-${env.capability}-3.png`);
+    }
+  });
+
+  it('should move slider bar to position on touchmove', async (browser, env) => {
+    const slider = await browser.findElement(By.css('amp-image-slider'));
+    const sliderRect = await slider.getRect();
+    // We have right label on this example, so we can get this element handle
+    const rightLabelWrapper = await browser.findElement(By.css('.i-amphtml-image-slider-label-wrapper.i-amphtml-image-slider-push-left'));
+    // Style is the attribute for use to know if the DOM has updated or not
+    let rightLabelWrapperStyle = await rightLabelWrapper.getAttribute('style');
+    // WARNING: CHROME ONLY
+    if (env.capability === 'chrome') {
+      // In this sequence, we only do tapAndHold, Should move slider
+      const touchSeq1 = new LegacyTouchSequence(browser);
+      // Move mouse to slider with offset
+      touchSeq1.tapAndHold({x: Math.round(sliderRect.x + 300), y: Math.round(sliderRect.y + 1)});
+      // Perform
+      await touchSeq1.perform();
+      // Wait for right wrapper to change transform (style)
+      await browser.wait(async () => {
+        const newStyle = await rightLabelWrapper.getAttribute('style');
+        return newStyle !== rightLabelWrapperStyle;
+      });
+
+      // Wait for hints to disappear, keeping our screenshot result uniform
+      await waitForHintDisappear(browser);
+
+      // Take the first screenshot, such that we know tapAndHold moves correctly
+      await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-touchmove-${env.capability}-1.png`);
+
+      // Refresh style
+      rightLabelWrapperStyle = await rightLabelWrapper.getAttribute('style');
+
+      // In this sequence, we only do move and release. Should move slider
+      const touchSeq2 = new LegacyTouchSequence(browser);
+      // Move touch to slider with offset
+      touchSeq2.move({x: Math.round(sliderRect.x + 100), y: Math.round(sliderRect.y + 1)});
+      // Release touch
+      touchSeq2.release({x: Math.round(sliderRect.x + 100), y: Math.round(sliderRect.y + 1)});
+      // Dispatch actions
+      await touchSeq2.perform();
+
+      // Wait for right wrapper to change transform (style)
+      await browser.wait(async () => {
+        const newStyle = await rightLabelWrapper.getAttribute('style');
+        return newStyle !== rightLabelWrapperStyle;
+      });
+
+      // Take a second screenshot, such that we know mousemove moves correctly
+      await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-touchmove-${env.capability}-2.png`);
+
+      // Refresh style
+      rightLabelWrapperStyle = await rightLabelWrapper.getAttribute('style');
+
+      // In this sequence, we only do move. Should NOT move slider
+      const touchSeq3 = new LegacyTouchSequence(browser);
+      // Move touch to slider with offset
+      touchSeq3.move({x: Math.round(sliderRect.x + 300), y: Math.round(sliderRect.y + 1)});
+      // Dispatch actions
+      await touchSeq3.perform();
+
+      // Wait for 1 second (so that we are sure if something happens, it should have happened (but nothing should happen))
+      await helper.wait.forMS(1000);
+
+      // Take a second screenshot, such that we know mousemove moves correctly
+      await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-touchmove-${env.capability}-3.png`);
+    }
+  });
+
+  /**
+   * Test continuous mouse move.
+   * This is more useful (for observation) in non-headless mode.
+   */
+  it('should move slider bar to position on continuous mousemove', async (browser, env) => {
+    const slider = await browser.findElement(By.css('amp-image-slider'));
+    // We have right label on this example, so we can get this element handle
+    const rightLabelWrapper = await browser.findElement(By.css('.i-amphtml-image-slider-label-wrapper.i-amphtml-image-slider-push-left'));
+    // Style is the attribute for use to know if the DOM has updated or not
+    let rightLabelWrapperStyle = await rightLabelWrapper.getAttribute('style');
+    // WARNING: CHROME ONLY
+    if (env.capability === 'chrome') {
+      const actionSeq = new LegacyActionSequence(browser);
+      // Move mouse to slider with offset
+      actionSeq.mouseMove(slider, {x: 300, y: 1});
+      // Mouse down
+      actionSeq.mouseDown();
+      // Stepped mouse move
+      for (let i = 299; i > 100; i--) {
+        actionSeq.mouseMove(slider, {x: i, y: 1});
+      }
+      actionSeq.mouseUp();
+      // Perform
+      await actionSeq.perform();
+      // Wait for right wrapper to change transform (style)
+      await browser.wait(async () => {
+        const newStyle = await rightLabelWrapper.getAttribute('style');
+        return newStyle !== rightLabelWrapperStyle;
+      });
+      // Wait for hints to disappear, keeping our screenshot result uniform
+      await waitForHintDisappear(browser);
+      // Take a second screenshot, such that we know mousemove moves correctly
+      await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-mousemove-continuous-${env.capability}.png`);
+    }
+  });
+
+  /**
+   * Test continuous touch move.
+   * This is more useful (for observation) in non-headless mode.
+   */
+  it('should move slider bar to position on continuous touchmove', async (browser, env) => {
+    const slider = await browser.findElement(By.css('amp-image-slider'));
+    const sliderRect = await slider.getRect();
+    // We have right label on this example, so we can get this element handle
+    const rightLabelWrapper = await browser.findElement(By.css('.i-amphtml-image-slider-label-wrapper.i-amphtml-image-slider-push-left'));
+    // Style is the attribute for use to know if the DOM has updated or not
+    let rightLabelWrapperStyle = await rightLabelWrapper.getAttribute('style');
+    // WARNING: CHROME ONLY
+    if (env.capability === 'chrome') {
+      const touchSeq = new LegacyTouchSequence(browser);
+      // Start tap and hold
+      touchSeq.tapAndHold({x: Math.round(sliderRect.x + 300), y: Math.round(sliderRect.y + 1)});
+      // Stepped mouse move
+      for (let i = 299; i > 100; i--) {
+        touchSeq.move({x: Math.round(sliderRect.x + i), y: Math.round(sliderRect.y + 1)});
+      }
+      // Perform
+      await touchSeq.perform();
+      // Wait for right wrapper to change transform (style)
+      await browser.wait(async () => {
+        const newStyle = await rightLabelWrapper.getAttribute('style');
+        return newStyle !== rightLabelWrapperStyle;
+      });
+      // Wait for hints to disappear, keeping our screenshot result uniform
+      await waitForHintDisappear(browser);
+      // Take a second screenshot, such that we know mousemove moves correctly
+      await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-touchmove-continuous-${env.capability}.png`);
     }
   });
 
@@ -194,6 +332,7 @@ describe('amp-image-slider', () => {
    */
   it('should show hint again after scrolling out and back into viewport', async (browser, env) => {
     const slider = await browser.findElement(By.css('amp-image-slider'));
+    // WARNING: CHROME ONLY
     if (env.capability === 'chrome') {
       // Take a screenshot for condition before operations (hint should be there)
       await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-scroll-reappear-${env.capability}-1.png`);
@@ -225,6 +364,7 @@ describe('amp-image-slider', () => {
   });
 
   it('should move slider with keyboard', async (browser, env) => {
+    // WARNING: CHROME ONLY
     if (env.capability === 'chrome') {
       // The following is also legacy, currently only working on Chrome
       const actionSeq1 = new LegacyActionSequence(browser);
