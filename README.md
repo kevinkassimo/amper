@@ -1,5 +1,7 @@
 # Amper
 
+[![asciicast](https://asciinema.org/a/pfnvgFMe1jUtniBhwlLHgUkQy.png)](https://asciinema.org/a/pfnvgFMe1jUtniBhwlLHgUkQy)
+
 This is an experiment of testing with concurrent multiple webdriver instances running.  
 A mocha-like test framework is created to run the tests. However, it differs from Mocha in that all `it()` are treated as individual tasks and scheduled as soon as possible. Therefore, local variables inside `describe` would not work in our case. We only allow passing information from `beforeEach()` to `it()` and then to `afterEach()` through `env` object. Furthermore, nested `describe` is not currently supported...
 
