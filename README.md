@@ -37,6 +37,7 @@ To change the capability available (which browsers, how many), go to `config.js`
 
 ## Custom Test Suite API
 ```javascript
+// Create a new suite. Suite name MUST be unique!
 describe('suite name', () => {
   beforeEach((browser, env) => {}); // OPTIONAL Runs before each test unit. `env` is passed across beforeEach, it and afterEach
   afterEach((browser, env) => {}); // OPTIONAL Runs after each test unit. `env` is passed across beforeEach, it and afterEach
