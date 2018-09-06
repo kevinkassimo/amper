@@ -338,12 +338,12 @@ describe.withCapabilities(['chrome'], 'amp-image-slider', () => {
       await env.screenShotManager.takeElementScreenshot('amp-image-slider', `slider-scroll-reappear-${env.capability}-1.png`);
       // Create a basic action
       const actionSeq = new LegacyActionSequence(browser);
-      // Move mouse to slider with offset
-      actionSeq.mouseMove(slider, {x: 250, y: 1});
-      // Mouse down
-      actionSeq.mouseDown();
-      // Mouse up
-      actionSeq.mouseUp();
+      // FOCUS first
+      actionSeq.sendKeys(Key.TAB);
+      // Press down left key
+      actionSeq.sendKeys(Key.HOME);
+      // CANCEL focus
+      actionSeq.sendKeys(Key.TAB);
       // Dispatch actions
       await actionSeq.perform();
       // Wait for hint to disappear
