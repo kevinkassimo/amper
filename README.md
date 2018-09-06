@@ -35,5 +35,23 @@ describe('Test suite', () => {
 ```
 To change the capability available (which browsers, how many), go to `config.js` and change there.
 
+## Custom Test Suite API
+```javascript
+describe('suite name', () => {
+  beforeEach((browser, env) => {}); // OPTIONAL Runs before each test unit. `env` is passed across beforeEach, it and afterEach
+  afterEach((browser, env) => {}); // OPTIONAL Runs after each test unit. `env` is passed across beforeEach, it and afterEach
+  it('test name', (browser, env) => {}) // A single test unit. `env` is passed across beforeEach, it and afterEach
+    .timeout(1000) // OPTIONAL Set timeout for this single test (beforeEach and afterEach has their own timeout, inherited from suite)
+  it.skip('skipped', (browser, env) => {}); // This test is skipped
+  it.only('only', (browser, env) => {}); // Only run this test in the suite
+}) // create a test suite
+.timeout(1000) // OPTIONAL Set timeout for suite (will be applied to beforeEach, afterEach, and by default on all it() test units)
+
+describe.skip('suite name', () => {}); // This suite is skipped
+describe.only('suite name', () => {}); // This suite will be the only one to be run
+describe.onlyWithCapabilities(['chrome'], 'suite name', () => {}); // This suite will only run under the specified capabilities (edit config.js for new ones)
+describe.exceptForCapabilities(['mobile-chrome'], 'suite name', () => {}); // This suite will only run if current capabilities is not in specified capabilities
+```
+
 ## Known issues
 `setTimeout` would block process from ever exist or more... AVOID using it.

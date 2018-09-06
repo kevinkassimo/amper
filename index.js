@@ -42,7 +42,7 @@ capsToTest.forEach(cap => {
     if (!fs.existsSync(filename)) {
       throw new Error(`File ${filename} does not exist`);
     }
-    // Change relative path
+    // Change relative path and reimport all test
     const registeredTestsInfo = registerTestFile(cap, `../${filename}`, reporter);
     if (registeredTestsInfo.hasOnly) {
       // There is a suite that we should only run

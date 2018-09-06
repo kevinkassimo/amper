@@ -1,15 +1,7 @@
-const fs = require('fs');
 const {By, until} = require('selenium-webdriver');
 
 const {AmpImgInjector} = require('../../lib/injector');
 const {ScreenShotManager} = require('../../lib/screenshot');
-const helper = require('../../lib/helper');
-
-// So, one thing I noticed it that there is a library called 'chai-webdriver'
-// It offers a really nice expect format.
-// However, it has not been updated for 2 years, during which webdriverjs dropped
-// support for promise manager.
-// Nevertheless, it will still be interesting to check out.
 
 async function waitForButtons(browser, env) {
   const prevButtonSelector = By.css('#slides .amp-carousel-button.amp-carousel-button-prev');
@@ -20,7 +12,7 @@ async function waitForButtons(browser, env) {
   env.nextButton = await browser.findElement(nextButtonSelector);
 }
 
-describe('amp-carousel[type=slides loop]', () => {
+describe.onlyWithCapabilities(['chrome'], 'amp-carousel[type=slides loop]', () => {
   beforeEach(async (browser, env) => {
     // It is suggested that on HTML side, add proper CSS rules to make things simpler
     // Also, it is suggested that different carousel for testing sit on a different page

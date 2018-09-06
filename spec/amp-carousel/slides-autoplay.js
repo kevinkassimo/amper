@@ -3,7 +3,7 @@ const {By, until} = require('selenium-webdriver');
 const {AmpImgInjector} = require('../../lib/injector');
 const {ScreenShotManager} = require('../../lib/screenshot');
 
-describe('amp-carousel[type=slides autoplay]', () => {
+describe.exceptForCapabilities(['mobile-chrome'], 'amp-carousel[type=slides autoplay]', () => {
   beforeEach(async (browser, env) => {
     await browser.get('http://localhost:8080/amp-carousel/slides-autoplay.amp.html');
     env.ampImgInjector = new AmpImgInjector(browser);
