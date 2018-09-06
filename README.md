@@ -49,8 +49,10 @@ describe('suite name', () => {
 
 describe.skip('suite name', () => {}); // This suite is skipped
 describe.only('suite name', () => {}); // This suite will be the only one to be run
-describe.onlyWithCapabilities(['chrome'], 'suite name', () => {}); // This suite will only run under the specified capabilities (edit config.js for new ones)
+describe.withCapabilities(['chrome'], 'suite name', () => {}); // This suite will only run under the specified capabilities (edit config.js for new ones)
 describe.exceptForCapabilities(['mobile-chrome'], 'suite name', () => {}); // This suite will only run if current capabilities is not in specified capabilities
+describe.onlyWithCapabilities(['chrome'], 'suite name', () => {}); // .only version of withCapabilities
+describe.onlyExceptForCapabilities(['mobile-chrome'], 'suite name', () => {}); // .only version of exceptForCapabilities
 ```
 
 ## Known issues

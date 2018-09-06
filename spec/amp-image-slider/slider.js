@@ -51,7 +51,7 @@ async function waitForHintReappear(browser) {
  * Only beforeEach(), afterEach(), and it() are implemented.
  * `browser` is the driver, and `env` is an object to store info across beforeEach, it and afterEach
  */
-describe.onlyWithCapabilities(['chrome'], 'amp-image-slider', () => {
+describe.withCapabilities(['chrome'], 'amp-image-slider', () => {
   beforeEach(async (browser, env) => {
     // Visit page FIRST!
     await browser.get('http://localhost:8080/amp-image-slider/slider.amp.html');

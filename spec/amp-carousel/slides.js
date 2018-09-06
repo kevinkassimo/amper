@@ -27,7 +27,7 @@ async function waitForButtons(browser, env) {
  * Only beforeEach(), afterEach(), and it() are implemented.
  * `browser` is the driver, and `env` is an object to store info across beforeEach, it and afterEach
  */
-describe.onlyWithCapabilities(['chrome'], 'amp-carousel[type=slides]', () => {
+describe.withCapabilities(['chrome'], 'amp-carousel[type=slides]', () => {
   beforeEach(async (browser, env) => {
     // It is suggested that on HTML side, add proper CSS rules to make things simpler
     // Also, it is suggested that different carousel for testing sit on a different page

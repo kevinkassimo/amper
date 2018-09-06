@@ -34,6 +34,9 @@ let tasks = [];
 const browserGroups = new BrowserGroups();
 const reporter = new Reporter();
 
+let hasOnly = false;
+let onlySuiteName = null;
+
 capsToTest.forEach(cap => {
   if (!(cap in capabilities)) {
     throw new Error(`Capability ${cap} is not registered in config.js`);
@@ -44,13 +47,26 @@ capsToTest.forEach(cap => {
     }
     // Change relative path and reimport all test
     const registeredTestsInfo = registerTestFile(cap, `../${filename}`, reporter);
-    if (registeredTestsInfo.hasOnly) {
-      // There is a suite that we should only run
-      tasks = registeredTestsInfo.tasks;
-      // No longer register other tests
-      break;
+    // If have seen suite that are labelled as 'only' before
+    if (hasOnly) {
+      // If it is the same suite, concat the tasks
+      if (onlySuiteName === registeredTestsInfo.onlySuiteName) {
+        tasks = tasks.concat(registeredTestsInfo.tasks);
+      }
+      // Otherwise, ignore this claimed 'only'
+    } else {
+      // First time see test suite that is labelled 'only'
+      if (registeredTestsInfo.hasOnly) {
+        // Record suite info
+        hasOnly = true;
+        onlySuiteName = registeredTestsInfo.onlySuiteName;
+        // Replace tasks
+        tasks = registeredTestsInfo.tasks;
+      } else {
+        // No only ever seen, simply concat tests
+        tasks.push(...registeredTestsInfo.tasks);
+      }
     }
-    tasks.push(...registeredTestsInfo.tasks);
   }
   // Default 1 instance per browser
   browserGroups.addBrowserInstances(cap, capabilities[cap].instances || 1);

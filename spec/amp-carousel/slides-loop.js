@@ -12,7 +12,7 @@ async function waitForButtons(browser, env) {
   env.nextButton = await browser.findElement(nextButtonSelector);
 }
 
-describe.onlyWithCapabilities(['chrome'], 'amp-carousel[type=slides loop]', () => {
+describe.withCapabilities(['chrome'], 'amp-carousel[type=slides loop]', () => {
   beforeEach(async (browser, env) => {
     // It is suggested that on HTML side, add proper CSS rules to make things simpler
     // Also, it is suggested that different carousel for testing sit on a different page
