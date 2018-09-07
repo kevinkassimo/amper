@@ -33,6 +33,7 @@ describe.withCapabilities(['chrome'], 'amp-carousel[type=slides]', () => {
     // Also, it is suggested that different carousel for testing sit on a different page
     await browser.get('http://localhost:8080/amp-carousel/slides.amp.html');
     await browser.findElement(By.css('amp-carousel[type="slides"]'));
+    // Inject code that gives us hint about if amp-img is loaded
     env.ampImgInjector = new AmpImgInjector(browser);
     await env.ampImgInjector.injectLoadScript();
     env.screenShotManager = new ScreenShotManager(browser, 'amp-carousel');
@@ -148,7 +149,7 @@ describe.withCapabilities(['chrome'], 'amp-carousel[type=slides]', () => {
     // 2. firefox throws on pointerType == TOUCH
     await helper.touch.scrollFromElement(browser, '.i-amphtml-slides-container', {
       x: 300,
-      y: -10,
+      y: -10, // deliberately added a y offset
     }, true);
 
     // Ensure we are at the second slide
@@ -173,7 +174,7 @@ describe.withCapabilities(['chrome'], 'amp-carousel[type=slides]', () => {
     // Scroll
     await helper.touch.scrollFromElement(browser, '.i-amphtml-slides-container', {
       x: 300,
-      y: -10,
+      y: -10, // deliberately added a y offset
     }, true);
     // Ensure we are at the third slide
     await browser.wait(until.elementLocated(By.css('[title="Previous item in carousel (3 of 4)"]')));
@@ -207,4 +208,4 @@ describe.withCapabilities(['chrome'], 'amp-carousel[type=slides]', () => {
     // Ensure buttons are ready
     await waitForButtons(browser, env);
   });
-}).timeout(2000000);
+}).timeout(20000);

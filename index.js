@@ -95,10 +95,13 @@ Promise.all(taskPromises).then(async () => {
       });
       // Clear reporter info
       reporter.reset();
+      // Refill the promises
       taskPromises = tasks.map(task => task.completePromise);
       // Reschedule
       tasks.forEach(task => browserGroups.dispatchTask(task));
+      // Wait for these promises
       await Promise.all(taskPromises);
+      // ... and generate report
       reporter.finalReport();
       if (reporter.erroredTask.length === 0) {
         // await browserGroups.cleanup();
