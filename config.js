@@ -30,7 +30,7 @@ module.exports = {
         deviceName: 'Nexus 5',
         // You may also want to add arguments
       },
-      instances: 2,
+      instances: 1,
       args: [ // arguments to pass to the driver. Only available on Chrome and Firefox
         '--user-agent="Mozilla/5.0 (Linux; Android 6.0.1; LGV33 Build/MXB48T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36"'
       ],

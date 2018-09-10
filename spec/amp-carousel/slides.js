@@ -117,7 +117,6 @@ describe.withCapabilities(['chrome'], 'amp-carousel[type=slides]', () => {
     await browser.wait(until.elementLocated(By.css('[title="Previous item in carousel (1 of 4)"]')));
     // SLIDE 2
     // Wait for img tag of amp-img to be loaded, we want the screenshot to actually have the image.
-    fs.writeFileSync('temp.html', await browser.findElement(By.css('body')).getAttribute('innerHTML'));
     await env.ampImgInjector.waitForLoad('#img-1');
     // Take a screenshot for the trip that goes back
     await env.screenShotManager.takeElementScreenshot('amp-carousel', `slides-${env.capability}-page-2-prev.png`);
