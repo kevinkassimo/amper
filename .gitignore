@@ -2,3 +2,4 @@ node_modules/
 screenshots/
 drivers/
 .DS_Store
+demo/
