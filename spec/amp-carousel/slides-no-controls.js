@@ -13,7 +13,7 @@ async function waitForButtons(browser, env) {
   env.nextButton = await browser.findElement(nextButtonSelector);
 }
 
-describe.onlyWithCapabilities(['mobile-chrome'], 'amp-carousel[type=slides] no-controls', () => {
+describe.withCapabilities(['mobile-chrome'], 'amp-carousel[type=slides] no-controls', () => {
   beforeEach(async (browser, env) => {
     await browser.get('http://localhost:8080/amp-carousel/slides-no-controls.amp.html');
     env.ampImgInjector = new AmpImgInjector(browser);
@@ -38,7 +38,7 @@ describe.onlyWithCapabilities(['mobile-chrome'], 'amp-carousel[type=slides] no-c
 
   // Goal: ensure that the buttons does NOT immediately fade, but still fade after 4 seconds
   // This test FLAKES
-  it.only('should fade buttons in about 4 seconds', async (browser, env) => {
+  it('should fade buttons in about 4 seconds', async (browser, env) => {
     // Ensure buttons are ready
     await waitForButtons(browser, env);
 
