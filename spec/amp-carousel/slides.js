@@ -204,7 +204,15 @@ describe.withCapabilities(['chrome'], 'amp-carousel[type=slides]', () => {
   });
 
   it('should respond to .goToSlide() action', async (browser, env) => {
-    // Ensure buttons are ready
+    // Ensure buttons are ready (if buttons are ready, we know the events are ready too)
     await waitForButtons(browser, env);
+    // Click goToSlides button
+    await browser.findElement(By.css('#goto')).click();
+    // Ensure we are at the third slide
+    await browser.wait(until.elementLocated(By.css('[title="Next item in carousel (4 of 4)"]')));
+    // Wait for image
+    await env.ampImgInjector.waitForLoad('#img-2');
+    // Take a screenshot
+    await env.screenShotManager.takeElementScreenshot('amp-carousel', `slides-goToSlides${env.capability}.png`);
   });
 }).timeout(20000);
